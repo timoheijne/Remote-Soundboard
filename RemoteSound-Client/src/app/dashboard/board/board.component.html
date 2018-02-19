@@ -1,0 +1,243 @@
+<div class="container">
+  <div><button type="button" class="btn btn-outline-light btn-sm square" (click)="setBoard.emit('');"><i class="fa fa-arrow-left" aria-hidden="true"></i> Return to select board</button></div>
+  
+  <small class="text-muted">Hold CTRL to edit a Sound / Directory | Press CTRL + D to add a new directory | Press CTRL + S to add a new sound </small>
+  
+  <div class="row mt-1">
+    <div class="col-sm-3" *ngIf="selectedDirectory != ''">
+      <div class="add-board" (click)="GoPageUp()">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        <br> ..
+      </div>
+    </div>
+
+    <div class="col-sm-3" *ngFor="let dir of dirsToShow">
+      <div class="sound-card" id="{{ dir }}" (click)="SetSelectedDirectory(dir)">
+        <i class="fa fa-folder" aria-hidden="true"></i> 
+        <br>
+        {{ GetDirInfo(dir).name }}
+      </div>
+    </div>
+
+    <div class="col-sm-3" *ngFor="let sound of soundsToShow">
+      <div class="sound-card" id="{{ sound.id }}" (click)="PlaySound(sound.id)">
+        <i class="fa fa-play" aria-hidden="true"></i> 
+        <br> 
+        {{ sound.name }}
+      </div>
+    </div>
+  
+    <div class="col-sm-3">
+      <div class="add-board" data-toggle="modal" data-target="#addSound" (click)="ResetAlertStructure(); this.newSoundFile = '';">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+        <br>
+        Add new sound
+      </div>
+    </div>
+
+    <div class="col-sm-3">
+      <div class="add-board" data-toggle="modal" data-target="#addDirectory" (click)="ResetAlertStructure()">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+        <br>
+        Add new directory
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editDirectory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content square">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Directory</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success square" *ngIf="alertStructure.success" role="alert" [innerHTML]="alertStructure.message"></div>
+        <div class="alert alert-danger square" *ngIf="alertStructure.error" role="alert" [innerHTML]="alertStructure.message"></div>
+
+        <form>
+          <div class="form-group">
+            <label for="editDirName">Directory Name</label>
+            <input type="name" [(ngModel)]="editDirName" name="editDirName" class="form-control square" id="editDirName" aria-describedby="nameHelp"
+              placeholder="Enter Name">
+            <small id="nameHelp" class="form-text text-muted">Enter the desired name of your directory.</small>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary square" data-dismiss="modal">Cancel</button>
+        <button type="button" (click)="EditDirectory()" data-dismiss="modal" class="btn btn-primary square">Edit Directory</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addDirectory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content square">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Directory</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success square" *ngIf="alertStructure.success" role="alert" [innerHTML]="alertStructure.message"></div>
+        <div class="alert alert-danger square" *ngIf="alertStructure.error" role="alert" [innerHTML]="alertStructure.message"></div>
+
+        <form>
+          <div class="form-group">
+            <label for="addDirName">Directory Name</label>
+            <input type="name" [(ngModel)]="newDirName" name="addDirName" class="form-control square" id="addDirName" aria-describedby="nameHelp"
+              placeholder="Enter Name">
+            <small id="nameHelp" class="form-text text-muted">Enter the desired name of your new directory.</small>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary square" data-dismiss="modal">Cancel</button>
+        <button type="button" (click)="AddDirectory()" class="btn btn-primary square">Add Directory</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addSound" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content square">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Sound</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success square" *ngIf="alertStructure.success" role="alert" [innerHTML]="alertStructure.message"></div>
+        <div class="alert alert-danger square" *ngIf="alertStructure.error" role="alert" [innerHTML]="alertStructure.message"></div>
+
+        <form>
+          <div class="form-group">
+            <label for="addSoundName">Sound Name</label>
+            <input type="name" [(ngModel)]="newSoundName" name="addSoundName" class="form-control square" id="addSoundName" aria-describedby="nameHelp"
+              placeholder="Enter Name">
+            <small id="nameHelp" class="form-text text-muted">Enter the desired name of your new sound.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="addSoundFile">Sound File</label>
+            <input type="file" accept=".wav, .mp3" (change)="getFiles($event)" class="form-control-file" id="addSoundFile" name="addSoundFile">
+            <small id="nameHelp" class="form-text text-muted">.wav and .mp3 files</small>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary square" data-dismiss="modal">Cancel</button>
+        <button type="button" (click)="AddSound()" class="btn btn-primary square">Add Sound</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editSound" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content square">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Sound</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success square" *ngIf="alertStructure.success" role="alert" [innerHTML]="alertStructure.message"></div>
+        <div class="alert alert-danger square" *ngIf="alertStructure.error" role="alert" [innerHTML]="alertStructure.message"></div>
+
+        <form>
+          <div class="form-group">
+            <label for="board-name">Sound Name</label>
+            <input type="name" [(ngModel)]="editSoundName" name="soundName" class="form-control square" id="soundName" aria-describedby="nameHelp"
+              placeholder="Enter Name">
+            <small id="nameHelp" class="form-text text-muted">Enter the desired name of your new sound.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="editSoundFile">Sound File</label>
+            <input type="file" accept=".wav, .mp3" (change)="getFiles($event)" class="form-control-file" id="editSoundFile" name="editSoundFile">
+            <small id="nameHelp" class="form-text text-muted">.wav and .mp3 files | Leave empty if you don't want to change the file</small>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary square" data-dismiss="modal">Cancel</button>
+        <button type="button" (click)="EditSound()" data-dismiss="modal" class="btn btn-primary square">Edit Sound</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog square" role="document">
+    <div class="modal-content square">
+      <div class="modal-body">
+
+        <div style="text-align: center;">
+          <h5>{{ connectionStatus.message }}</h5>
+        </div>
+        
+        <div style="margin-top: 25px;" class="spinner" *ngIf="connectionStatus.isConnecting">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer - Control -->
+<nav class="navbar fixed-bottom navbar-expand-lg navbar-dark bg-dark">
+  <div class="container" style="text-align: middle;">
+
+    <div class="col-md-1" style="text-align: center;">
+      <ng-container *ngIf="audio.readyState == 4">
+        <span *ngIf="audio.paused" (click)="audio.play()"><i class="fa fa-play" aria-hidden="true"></i></span>
+        <span *ngIf="!audio.paused" (click)="audio.pause()"><i class="fa fa-pause" aria-hidden="true"></i></span>
+        <span (click)="audio.pause(); audio.src = ''"><i class="fa fa-stop" aria-hidden="true"></i></span>
+      </ng-container>
+    </div>
+
+    <div class="col-md-8">
+      <ng-container *ngIf="audio.readyState == 4">
+        <div class="row">
+          <div class="col-md-1">
+            {{ audioCurTime | date: 'm:ss' }}
+          </div>
+
+          <div class="col-md-10">
+            <input type="range" min="0" max="{{ audio.duration }}" value="{{ audio.currentTime }}" [(ngModel)]="audio.currentTime" class="slider"
+              id="myRange">
+          </div>
+
+          <div class="col-md-1">
+            {{ audioDuration | date: 'm:ss' }}
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="col-md-3">  
+      <div class="row">
+        <div class="col-md-1">
+          <i class="fa fa-volume-down" aria-hidden="true"></i>
+        </div>
+
+        <div class="col-md-10">
+          <input type="range" min="0" max="1" step="0.01" value="{{ audio.volume }}" [(ngModel)]="audio.volume" class="slider" id="myRange">
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- End - Footer - Control -->

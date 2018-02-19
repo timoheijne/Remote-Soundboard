@@ -1,0 +1,35 @@
+<div class="login-page">
+    <div class="form">
+
+        <div *ngIf="hasSuccess" class="alert alert-success square" role="alert">
+            {{ successMessage }}
+        </div>
+        
+        <div *ngIf="hasErrored" class="alert alert-danger square" role="alert">
+            {{ errorMessage }}
+        </div>
+
+        <form class="login-form" (ngSubmit)="onLogin()">
+            <h4 style="color: black;">Login</h4>
+            <input type="text" name="login_username" id="login_username" placeholder="Username" [(ngModel)]="login.login" />
+            <input type="password" name="login_password" id="login_password" placeholder="Password" [(ngModel)]="login.password" />
+            <button type="submit" class="form-btn">login</button>
+            <p class="message">
+                <button type="button" class="btn btn-link btn-sm" (click)="ToggleRegister()">Not registered? Create an account</button>
+            </p>
+        </form>
+
+        <form class="register-form" (ngSubmit)="onRegister(registerForm)" #registerForm="ngForm">
+            <h4 style="color: black;">Register</h4>
+            <input type="text" name="register_username" id="username" placeholder="Username" [(ngModel)]="register.username" />
+            <input type="email" name="register_email" id="email" placeholder="Email" [(ngModel)]="register.email"/>
+            <input type="password" name="register_password" id="password" placeholder="password" [(ngModel)]="register.password"/>
+            <input type="password" name="register_password_confirm" id="password_confirm" placeholder="confirm password" [(ngModel)]="register.password_confirm"/>
+
+            <button type="submit" class="form-btn">Register</button>
+            <p class="message">
+                <button type="button" class="btn btn-link btn-xs" (click)="ToggleRegister()">Already have an account? Login</button>
+            </p>
+        </form>
+    </div>
+</div>
