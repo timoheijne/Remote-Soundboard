@@ -2,10 +2,6 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 
 var users = [];
-export class User {
-    client = "";
-    remote = "";
-}
 
 var server = http.createServer(function (request, response) {
     // process HTTP request. Since we're writing just WebSockets

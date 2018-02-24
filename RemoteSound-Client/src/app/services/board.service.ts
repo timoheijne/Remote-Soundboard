@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs/Rx';
 import { ConnectionService } from 'app/services/connection.service';
+import { environment } from '../../environments/environment';
 
-const CHAT_URL = 'ws://websocket.timoheijne.nl:1337';
+const CHAT_URL = 'ws://' + environment.webSocket + ':1337';
 
 export interface Message {
   dataType: string,
